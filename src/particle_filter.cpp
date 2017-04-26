@@ -46,6 +46,11 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	// EPSILON defines threshold between normal dynamics and zero yaw-rate dynamics.
 	double EPSILON = 0.000001; // rad / s
 
+	std::default_random_engine gen;
+	std::normal_distribution<double> N_x(0.0, std_pos[0]);
+	std::normal_distribution<double> N_y(0.0, std_pos[1]);
+	std::normal_distribution<double> N_theta(0.0, std_pos[2]);
+
 	// Advance each state according the bicycle model while injecting process noise into it.
 	for (int i=0; i<num_particles; i++) {
 		
@@ -74,10 +79,10 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 			thetaf = p.theta;
 		}
 		
-		// Overwrite particle state in particles vector.
-		particles[i].x = xf;
-		particles[i].y = yf;
-		particles[i].theta = thetaf;
+		// Overwrite particle state in particles vector with deterministic state + noise.
+		particles[i].x = xf + N_x(gen);
+		particles[i].y = yf + N_y(gen);
+		particles[i].theta = thetaf + N_theta(gen);
 	}
 
 }
