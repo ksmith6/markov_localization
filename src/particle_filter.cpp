@@ -25,7 +25,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	std::normal_distribution<double> N_theta(theta, std[2]);
 
 	// Initialize particles.
-	for (i=0; i<num_particles; i++) {
+	for (int i=0; i<num_particles; i++) {
 		Particle particle;
 		particle.id = i;
 		particle.x = N_x(gen);
