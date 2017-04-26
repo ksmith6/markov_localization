@@ -43,6 +43,43 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 
+	// EPSILON defines threshold between normal dynamics and zero yaw-rate dynamics.
+	double EPSILON = 0.000001; // rad / s
+
+	// Advance each state according the bicycle model while injecting process noise into it.
+	for (int i=0; i<num_particles; i++) {
+		
+		// Create shorthand variable for the i^th particle
+		Particle p = particles[i];
+
+		// Instantiate the variables for updated states.
+		double xf;
+		double yf;
+		double thetaf;
+
+		// Switch dynamics based on turn rate.
+		if (fabs(yaw_rate) > EPSILON) {
+			// Standard bicycle model dynamics
+
+			// Cache product to avoid repeated multiplications
+			double thetaDot_dt = yaw_rate*delta_t;
+
+			xf = p.x + velocity/yaw_rate * (sin(p.theta + thetaDot_dt) - sin(p.theta));
+			yf = p.y + velocity/yaw_rate * (cos(p.theta) - cos(p.theta + thetaDot_dt));
+			thetaf = p.theta + thetaDot_dt;
+		} else {
+			// Zero Yaw-Rate Dynamics
+			xf = p.x + velocity * delta_t * cos(p.theta);
+			yf = p.y + velocity * delta_t * sin(p.theta);
+			thetaf = p.theta;
+		}
+		
+		// Overwrite particle state in particles vector.
+		particles[i].x = xf;
+		particles[i].y = yf;
+		particles[i].theta = thetaf;
+	}
+
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
