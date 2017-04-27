@@ -108,6 +108,29 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   3.33. Note that you'll need to switch the minus sign in that equation to a plus to account 
 	//   for the fact that the map's y-axis actually points downwards.)
 	//   http://planning.cs.uiuc.edu/node99.html
+	
+	// Maintain running sum of weights for normalization.
+	double sumW = 0;
+
+	for (int i=0; i<num_particles; i++) {
+		double w = 1.0;
+
+		// TODO - Compute likelihood of each measurements
+		
+		//double denominator = sqrt(2*pi*sigma);
+		//for (int j=0; j < num_measurements; j++) {
+		//	w *= denominator * exp(-0.5 * dxT * sigInv * dx);
+		//}
+		
+		sumW += w;
+
+		particles[i].weight = w;
+	}
+
+	// Normalization step
+	for (int i=0; i < num_particles; i++) {
+		particles[i].weight /= sumW;
+	}
 }
 
 void ParticleFilter::resample() {
