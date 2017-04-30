@@ -143,15 +143,15 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			double minDist;
 			double associated_landmark_x;
 			double associated_landmark_y;
-			for (int k=0; i<map_landmarks; k++) {
-				double thisDist = dist(ox, oy, map_landmarks[k].x, map_landmarks[k].y);
+			for (int k=0; k<map_landmarks.landmark_list.size(); k++) {
+				double thisDist = dist(ox, oy, map_landmarks.landmark_list[k].x_f, map_landmarks.landmark_list[k].y_f);
 				
 				// If this is the first iteration or if the distance is less than the minimum distance, 
 				if (k==0 || (thisDist < minDist)) {
 					// Then update the minimum distance.
 					minDist = thisDist;
-					associated_landmark_x = map_landmarks[k].x;
-					associated_landmark_y = map_landmarks[k].y;
+					associated_landmark_x = map_landmarks.landmark_list[k].x_f;
+					associated_landmark_y = map_landmarks.landmark_list[k].y_f;
 				}
 			} // end of nearest neighbor search loop
 
