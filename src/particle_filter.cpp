@@ -135,12 +135,11 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			}
 		}
 
-
 		// Cache expensive trig operations.
 		double cosH = cos(-particles[i].theta);
 		double sinH = sin(-particles[i].theta);
 
-		for (int j=0; j<observations.size();j++) {
+		for (int j=0; j<observations.size(); j++) {
 			// Transform the observations into map coordinate system.
 			//    z_m = xp + T * z_v
 			double ox = particles[i].x + cosH * observations[j].x + sinH * observations[j].y;
@@ -171,9 +170,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			double yComp = 0.5 * (oy - associated_landmark_y)*(oy - associated_landmark_y) / (std_landmark[1]*std_landmark[1]);;
 			double pdf = firstTerm * exp(-(xComp + yComp)); 
 
-			particles[i].weight *= pdf;
+			w *= pdf;
 
 		} // end of observation processing loop
+		particles[i].weight = w;
 		sumW += particles[i].weight;
 	} // end of particle loop
 
