@@ -128,8 +128,15 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	for (int i=0; i<num_particles; i++) {
 		double w = 1.0;
 
+		std::vector<Map::single_landmark_s> close_landmarks;
+		for (int j=0; j<map_landmarks.landmark_list.size(); j++) {
+			if (dist(map_landmarks.landmark_list[j].x_f, map_landmarks.landmark_list[j].y_f, particles[i].x, particles[i].y) <= sensor_range) {
+				close_landmarks.push_back(map_landmarks.landmark_list[j]);
+			}
+		}
 
-		// Cache trig operations for CPU savings.
+
+		// Cache expensive trig operations.
 		double cosH = cos(-particles[i].theta);
 		double sinH = sin(-particles[i].theta);
 
